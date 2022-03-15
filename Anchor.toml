@@ -1,0 +1,6 @@
+[provider]
+# these are overridden in the command line, ignore
+cluster = "http://127.0.0.1:8899"
+wallet = "./keypair.json"
+
+

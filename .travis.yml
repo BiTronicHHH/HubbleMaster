@@ -1,0 +1,26 @@
+language: rust
+
+before_install:
+  - curl -L https://github.com/mozilla/grcov/releases/latest/download/grcov-linux-x86_64.tar.bz2 | tar jxf -
+
+matrix:
+  include:
+    - os: linux
+      rust: nightly
+
+rust:
+  - stable
+
+cache: cargo
+
+env:
+  - CODECOV_TOKEN=1f11a4e7-dbbf-47ed-bfd3-4709a592daf3
+
+script:
+  - rustup component add llvm-tools-preview
+  - export RUSTFLAGS="-Zinstrument-coverage"
+  - export CODECOV_TOKEN="1f11a4e7-dbbf-47ed-bfd3-4709a592daf3"
+  - cargo build --verbose
+  - LLVM_PROFILE_FILE="hubblecoverage-%p-%m.profraw" cargo test --verbose
+  - ./grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing --ignore "/*" -o lcov.info
+  - bash <(curl -s https://codecov.io/bash) -f lcov.info
